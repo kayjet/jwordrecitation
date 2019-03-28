@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.kayjet.word.recitation.mapper.WordMapper">
+
+    <update id="updateWrongWordTimes" parameterType="java.util.List">
+        update t_word set wrong_times = wrong_times + 1
+        WHERE tid in
+        <foreach collection="wordIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="wrongWords" resultMap="wordResult">
+        select * from t_word WHERE t_word.wrong_times>0 ORDER BY t_word.wrong_times DESC , t_word.create_time DESC;
+    </select>
+
+    <select id="reviewWrongWords" resultMap="wordResult">
+       select * from t_word WHERE t_word.wrong_times>0 ORDER BY  RAND() LIMIT 15;
+    </select>
+
+    <select id="countYesterdayAddedWords" parameterType="java.sql.Timestamp" resultType="java.lang.Integer">
+         select count(*) from t_word WHERE t_word.create_time > #{time};
+    </select>
+
+</mapper>
